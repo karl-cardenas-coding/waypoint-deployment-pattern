@@ -1,0 +1,3 @@
+variables.pkrvars.hcl
+terraform.tfvars
+./terraform/
