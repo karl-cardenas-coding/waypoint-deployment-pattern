@@ -1,3 +1,4 @@
 variables.pkrvars.hcl
 terraform.tfvars
 .terraform/
+packer_cache/
