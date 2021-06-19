@@ -58,10 +58,17 @@ build {
     destination = "/tmp/"
   }
 
+  provisioner "file" {
+    source      = "boot_script.sh"
+    destination = "/tmp/"
+  }
+
   provisioner "shell" {
     inline = [
       "echo Connected via SSM at '${build.User}@${build.Host}:${build.Port}'",
+      "chmod +x /tmp/boot_script.sh",
       "sudo mv /tmp/waypoint.service /usr/lib/systemd/system/",
+      "sudo mv /tmp/boot_script.sh /usr/bin/",
       "chmod +x /tmp/install.sh",
       "bash /tmp/install.sh"
     ]

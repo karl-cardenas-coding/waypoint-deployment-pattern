@@ -2,3 +2,5 @@ variables.pkrvars.hcl
 terraform.tfvars
 .terraform/
 packer_cache/
+terraform.tfstate.*
+terraform.tfstate

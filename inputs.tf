@@ -8,6 +8,11 @@ variable "instance-type" {
   description = "The instance type to use for the Waypoint Deployment"
 }
 
+variable "instance-profile" {
+  type        = string
+  description = "The IAM Instance profile name to use on the EC2 instance"
+}
+
 variable "tags" {
   type        = map(any)
   description = "The default tags to provide the Terraform generated resources"
@@ -26,4 +31,9 @@ variable "subnet-ids" {
 variable "security-groups-ids" {
   type        = list(string)
   description = "A list of security groups to use for Waypoint resources"
+}
+
+variable "domain-name" {
+  type        = string
+  description = "The domain name for the certificate and ALB to advertise"
 }

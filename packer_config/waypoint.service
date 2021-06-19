@@ -7,11 +7,12 @@ Requires=docker.service
 After=network-online.target
 
 [Service]
-Type=notify
+Type=simple
 User=waypoint
 Group=waypoint
 ExecStart=/usr/bin/waypoint install -platform=docker -accept-tos -context-set-default 
 ExecReload=/bin/kill --signal HUP $MAINPID
+ExecStartPost=-/usr/bin/boot_script.sh
 KillMode=process
 Restart=on-failure
 LimitNOFILE=65536
