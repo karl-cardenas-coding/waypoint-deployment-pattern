@@ -24,25 +24,36 @@ data "amazon-ami" "latest-linux2" {
 }
 
 source "amazon-ebs" "linux2" {
-  ami_name              = "waypoint_linux2_${local.image_suffix}"
-  instance_type         = "t2.micro"
-  region                = var.region
-  ami_description       = var.description
-  source_ami            = data.amazon-ami.latest-linux2.id
-  ssh_username          = "ec2-user"
-  ssh_interface         = "session_manager"
-  communicator          = "ssh"
-  iam_instance_profile  = var.instance-profile
-  force_deregister      = true
-  force_delete_snapshot = true
-  tags                  = merge({ Name = "waypoint_linux2_${local.image_suffix}" }, var.tags)
-  snapshot_tags         = merge({ Name = "waypoint_linux2_${local.image_suffix}" }, var.tags)
+  ami_name                    = "waypoint_linux2_${local.image_suffix}"
+  instance_type               = "t2.micro"
+  region                      = var.region
+  ami_description             = var.description
+  source_ami                  = data.amazon-ami.latest-linux2.id
+  ssh_username                = "ec2-user"
+  ssh_interface               = "session_manager"
+  communicator                = "ssh"
+  iam_instance_profile        = var.instance-profile
+  associate_public_ip_address = var.public-ip
+  force_deregister            = true
+  force_delete_snapshot       = true
+  tags                        = merge({ Name = "waypoint_linux2_${local.image_suffix}" }, var.tags)
+  snapshot_tags               = merge({ Name = "waypoint_linux2_${local.image_suffix}" }, var.tags)
 
   metadata_options {
     http_endpoint               = "enabled"
     http_tokens                 = "required"
     http_put_response_hop_limit = 1
   }
+
+  vpc_id = "vpc-6e92a815"
+  subnet_id = "subnet-0fdfc630"
+
+#   vpc_filter {
+#     filters = {
+#       "isDefault" : true,
+#  #     "cidr" : "/16"
+#     }
+#   }
 }
 
 build {

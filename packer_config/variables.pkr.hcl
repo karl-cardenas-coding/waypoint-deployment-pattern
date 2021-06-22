@@ -33,6 +33,11 @@ variable "tags" {
   description = "AWS tags to add to the AMI"
 }
 
+variable "public-ip" {
+  type        = bool
+  description = "To enable a public IP for the builder instance"
+}
+
 locals {
   image_suffix = formatdate("DD_MMM_YYYY", timestamp())
 }

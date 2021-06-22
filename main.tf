@@ -55,135 +55,148 @@ data "aws_ami" "waypoint-ami" {
 
 
 
-module "alb" {
-  source  = "terraform-aws-modules/alb/aws"
-  version = "~> 6.1"
+# module "alb" {
+#   source  = "terraform-aws-modules/alb/aws"
+#   version = "~> 6.1"
 
-  name = "waypoint-alb-${var.region}"
+#   name = "waypoint-alb-${var.region}"
 
-  load_balancer_type = "network"
+#   load_balancer_type = "network"
 
-  vpc_id  = var.vpc-id
-  subnets = var.subnet-ids
-  # security_groups = var.security-groups-ids
+#   vpc_id  = var.vpc-id
+#   subnets = var.subnet-ids
+#   # security_groups = var.security-groups-ids
 
-  # access_logs = {
-  #   bucket = "my-alb-logs"
-  # }
+#   # access_logs = {
+#   #   bucket = "my-alb-logs"
+#   # }
 
-  target_groups = [
-    {
-      name_prefix      = "dft"
-      backend_protocol = "TLS"
-      backend_port     = 9702
-      target_type      = "instance"
-      # health_check = {
-      #   enabled             = true
-      #   path                = "/"
-      #   port                = "traffic-port"
-      #   healthy_threshold   = 5
-      #   unhealthy_threshold = 5
-      # }
-    },
-    {
-      name_prefix      = "dft"
-      backend_protocol = "TCP"
-      protocol_version = "gRPC"
-      backend_port     = 9701
-      target_type      = "instance"
-      #  health_check = {
-      #   enabled             = false
-      #   path                = "/"
-      #   interval            =  10
-      #   port                = 9701
-      #   healthy_threshold   = 5
-      #   unhealthy_threshold = 5
-      # }
-    }
-  ]
+#   target_groups = [
+#     {
+#       name_prefix      = "dft"
+#       backend_protocol = "TLS"
+#       backend_port     = 9702
+#       target_type      = "instance"
+#       deregistration_delay  = 60
+#       # health_check = {
+#       #   enabled             = true
+#       #   path                = "/"
+#       #   port                = "traffic-port"
+#       #   healthy_threshold   = 5
+#       #   unhealthy_threshold = 5
+#       # }
+#     },
+#     {
+#       name_prefix      = "dft"
+#       backend_protocol = "TCP"
+#       protocol_version = "gRPC"
+#       backend_port     = 9701
+#       target_type      = "instance"
+#       deregistration_delay  = 60
+#       #  health_check = {
+#       #   enabled             = false
+#       #   path                = "/"
+#       #   interval            =  10
+#       #   port                = 9701
+#       #   healthy_threshold   = 5
+#       #   unhealthy_threshold = 5
+#       # }
+#     }
+#   ]
 
-  https_listeners = [
-    {
-      port               = 443
-      protocol           = "TLS"
-      certificate_arn    = aws_acm_certificate.domain.arn
-      target_group_index = 0
-    }
-  ]
+#   https_listeners = [
+#     {
+#       port               = 443
+#       protocol           = "TLS"
+#       certificate_arn    = aws_acm_certificate.domain.arn
+#       target_group_index = 0
+#     }
+#   ]
 
-   http_tcp_listeners = [
-    {
-      port               = 9701
-      protocol           = "TCP"
-      target_group_index = 1
-    }
-  ]
+#    http_tcp_listeners = [
+#     {
+#       port               = 9701
+#       protocol           = "TCP"
+#       target_group_index = 1
+#     }
+#   ]
 
-  # depends_on = [
-  #   null_resource.build-waypoint-ami
-  # ]
-}
+#   # depends_on = [
+#   #   null_resource.build-waypoint-ami
+#   # ]
+# }
 
-module "asg" {
-  source  = "terraform-aws-modules/autoscaling/aws"
-  version = "~> 4.0"
+# module "asg" {
+#   source  = "terraform-aws-modules/autoscaling/aws"
+#   version = "~> 4.0"
 
-  # Autoscaling group
-  name = "waypoint-deployment-${var.region}"
+#   # Autoscaling group
+#   name = "waypoint-deployment-${var.region}"
 
-  min_size                    = 1
-  max_size                    = 1
-  desired_capacity            = 1
-  wait_for_capacity_timeout   = "1m"
-  health_check_grace_period   = "60"
-  health_check_type           = "EC2"
-  vpc_zone_identifier         = var.subnet-ids
-  iam_instance_profile_name   = var.instance-profile
-  associate_public_ip_address = false
+#   min_size                    = 1
+#   max_size                    = 1
+#   desired_capacity            = 1
+#   wait_for_capacity_timeout   = "5m"
+#   health_check_grace_period   = "30"
+#   delete_timeout              = "5m"
+#   health_check_type           = "EC2"
+#   vpc_zone_identifier         = var.subnet-ids
+#   iam_instance_profile_name   = var.instance-profile
+#   associate_public_ip_address = true
 
-  target_group_arns = module.alb.target_group_arns
+#   target_group_arns = module.alb.target_group_arns
 
-  termination_policies = ["OldestInstance"]
+#   termination_policies = ["OldestInstance"]
 
-  # Launch template
-  lt_name                = "waypoint-deployment-asg"
-  description            = "A launch template for deploying Waypoint"
-  update_default_version = true
+#   # Launch template
+#   lt_name                = "waypoint-deployment-asg"
+#   description            = "A launch template for deploying Waypoint"
+#   update_default_version = true
 
-  use_lt    = true
-  create_lt = true
+#   use_lt    = true
+#   create_lt = true
 
-  image_id          = data.aws_ami.waypoint-ami.id
-  instance_type     = var.instance-type
-  ebs_optimized     = false
-  enable_monitoring = false
+#   image_id          = data.aws_ami.waypoint-ami.id
+#   instance_type     = var.instance-type
+#   ebs_optimized     = false
+#   enable_monitoring = false
 
-  # block_device_mappings = [
-  #   {
-  #     # Root volume
-  #     device_name = "/dev/xvda"
-  #     no_device   = 0
-  #     ebs = {
-  #       delete_on_termination = true
-  #       encrypted             = true
-  #       volume_size           = 20
-  #       volume_type           = "gp2"
-  #     }
-  #   }
-  # ]
+#     network_interfaces = [
+#     {
+#       delete_on_termination = true
+#       description           = "eth0"
+#       device_index          = 0
+#       security_groups       = var.security-groups-ids
+#       associate_public_ip_address = true
+#     }
+#   ]
 
-  metadata_options = {
-    http_endpoint               = "enabled"
-    http_tokens                 = "required"
-    http_put_response_hop_limit = 32
-  }
+#   block_device_mappings = [
+#     {
+#       # Root volume
+#       device_name = "/dev/xvda"
+#       no_device   = 0
+#       ebs = {
+#         delete_on_termination = true
+#         encrypted             = true
+#         volume_size           = 30
+#         volume_type           = "gp2"
+#       }
+#     }
+#   ]
 
-  tags_as_map = var.tags
+#   metadata_options = {
+#     http_endpoint               = "enabled"
+#     http_tokens                 = "required"
+#     http_put_response_hop_limit = 32
+#   }
 
-  # depends_on = [
-  #   null_resource.build-waypoint-ami
-  # ]
-}
+#   tags_as_map = var.tags
+
+#   # depends_on = [
+#   #   null_resource.build-waypoint-ami
+#   # ]
+# }
 
 resource "aws_ssm_parameter" "waypoint-context" {
   name  = "waypoint_context"
@@ -243,14 +256,14 @@ resource "aws_route53_record" "cert-validation" {
   zone_id         = data.aws_route53_zone.selected.zone_id
 }
 
-resource "aws_route53_record" "www" {
-  zone_id = data.aws_route53_zone.selected.zone_id
-  name    = var.domain-name
-  type    = "A"
+# resource "aws_route53_record" "www" {
+#   zone_id = data.aws_route53_zone.selected.zone_id
+#   name    = var.domain-name
+#   type    = "A"
 
-  alias {
-    name                   = module.alb.lb_dns_name
-    zone_id                = module.alb.lb_zone_id
-    evaluate_target_health = true
-  }
-}
+#   alias {
+#     name                   = module.alb.lb_dns_name
+#     zone_id                = module.alb.lb_zone_id
+#     evaluate_target_health = true
+#   }
+# }

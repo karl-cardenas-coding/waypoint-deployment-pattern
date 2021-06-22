@@ -16,6 +16,8 @@ sudo yum -y install waypoint jq
 /usr/bin/waypoint version
 sudo yum install -y https://s3.region.amazonaws.com/amazon-ssm-region/latest/linux_amd64/amazon-ssm-agent.rpm
 sudo yum install -y docker
+## Added to allow Docker usage
+sudo usermod -aG docker waypoint
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
