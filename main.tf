@@ -14,10 +14,11 @@ terraform {
 provider "aws" {
   region = var.region
   assume_role {
-    role_arn = "arn:aws:iam::140040602879:role/automation-role"
+    role_arn = var.role_arn
   }
 }
 
+## This data resource is configured to retrieve the AMI created by the Packer job.
 data "aws_ami" "waypoint-ami" {
   most_recent = true
   name_regex  = "waypoint_linux2_*"

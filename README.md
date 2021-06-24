@@ -120,6 +120,7 @@ No modules.
 | <a name="input_instance-type"></a> [instance-type](#input\_instance-type) | The instance type to use for the Waypoint Deployment | `string` | n/a | yes |
 | <a name="input_profile"></a> [profile](#input\_profile) | The AWS Profile to use for Packer builds and Terraform runs | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | The AWS region to target | `string` | n/a | yes |
+| <a name="input_role_arn"></a> [role\_arn](#input\_role\_arn) | The role arn for the AWS role to assume when executing Terraform | `string` | n/a | yes |
 | <a name="input_security-groups-ids"></a> [security-groups-ids](#input\_security-groups-ids) | A list of security groups to use for Waypoint resources | `list(string)` | n/a | yes |
 | <a name="input_subnet-ids"></a> [subnet-ids](#input\_subnet-ids) | A list of eligble subnets to deploy Waypoint resources | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | The default tags to provide the Terraform generated resources | `map(any)` | n/a | yes |
@@ -128,6 +129,7 @@ No modules.
 ## Outputs
 
 No outputs.
+
 
 
 ## Accessing Waypoint
@@ -151,8 +153,8 @@ waypoint context create \
 To setup a remote runner, you need to provide the following configuration to the remote instance. Make sure to add the actual token value provided by Waypoint in the command below.
 ```shell
 WAYPOINT_SERVER_ADDR=<yourDomainHere>:9701 \
-  WAYPOINT_SERVER_TLS=true \
-  WAYPOINT_SERVER_TOKEN=<yourTokenHere> \
-  WAYPOINT_SERVER_TLS_SKIP_VERIFY=true \
-  waypoint runner agent
+WAYPOINT_SERVER_TLS=true \
+WAYPOINT_SERVER_TOKEN=<yourTokenHere> \
+WAYPOINT_SERVER_TLS_SKIP_VERIFY=true \
+waypoint runner agent
 ```

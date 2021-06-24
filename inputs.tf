@@ -8,6 +8,11 @@ variable "profile" {
   description = "The AWS Profile to use for Packer builds and Terraform runs"
 }
 
+variable "role_arn" {
+  type        = string
+  description = "The role arn for the AWS role to assume when executing Terraform"
+}
+
 variable "instance-type" {
   type        = string
   description = "The instance type to use for the Waypoint Deployment"
