@@ -4,3 +4,4 @@ terraform.tfvars
 packer_cache/
 terraform.tfstate.*
 terraform.tfstate
+workfile.txt

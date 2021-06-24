@@ -1,0 +1,9 @@
+[Unit]
+Description=Run the Waypoint backup script every 60 minutes
+Requires=waypoint_backup.service
+[Timer]
+Unit=waypoint_cron.service
+OnUnitActiveSec=5m
+AccuracySec=1s
+[Install]
+WantedBy=timers.target

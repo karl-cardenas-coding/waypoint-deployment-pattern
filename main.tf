@@ -48,7 +48,7 @@ data "aws_ami" "waypoint-ami" {
 #     command = "cd packer_config/ && packer build ."
 
 #     environment = {
-#       AWS_PROFILE = "automation"
+#       AWS_PROFILE = var.profile
 #     }
 #   }
 # }
@@ -73,11 +73,11 @@ data "aws_ami" "waypoint-ami" {
 
 #   target_groups = [
 #     {
-#       name_prefix      = "dft"
-#       backend_protocol = "TLS"
-#       backend_port     = 9702
-#       target_type      = "instance"
-#       deregistration_delay  = 60
+#       name_prefix          = "dft"
+#       backend_protocol     = "TLS"
+#       backend_port         = 9702
+#       target_type          = "instance"
+#       deregistration_delay = 60
 #       # health_check = {
 #       #   enabled             = true
 #       #   path                = "/"
@@ -87,12 +87,12 @@ data "aws_ami" "waypoint-ami" {
 #       # }
 #     },
 #     {
-#       name_prefix      = "dft"
-#       backend_protocol = "TCP"
-#       protocol_version = "gRPC"
-#       backend_port     = 9701
-#       target_type      = "instance"
-#       deregistration_delay  = 60
+#       name_prefix          = "dft"
+#       backend_protocol     = "TCP"
+#       protocol_version     = "gRPC"
+#       backend_port         = 9701
+#       target_type          = "instance"
+#       deregistration_delay = 60
 #       #  health_check = {
 #       #   enabled             = false
 #       #   path                = "/"
@@ -113,7 +113,7 @@ data "aws_ami" "waypoint-ami" {
 #     }
 #   ]
 
-#    http_tcp_listeners = [
+#   http_tcp_listeners = [
 #     {
 #       port               = 9701
 #       protocol           = "TCP"
@@ -153,20 +153,21 @@ data "aws_ami" "waypoint-ami" {
 #   description            = "A launch template for deploying Waypoint"
 #   update_default_version = true
 
-#   use_lt    = true
-#   create_lt = true
+#   use_lt     = true
+#   create_lt  = true
+#   lt_version = "$Latest"
 
 #   image_id          = data.aws_ami.waypoint-ami.id
 #   instance_type     = var.instance-type
 #   ebs_optimized     = false
 #   enable_monitoring = false
 
-#     network_interfaces = [
+#   network_interfaces = [
 #     {
-#       delete_on_termination = true
-#       description           = "eth0"
-#       device_index          = 0
-#       security_groups       = var.security-groups-ids
+#       delete_on_termination       = true
+#       description                 = "eth0"
+#       device_index                = 0
+#       security_groups             = var.security-groups-ids
 #       associate_public_ip_address = true
 #     }
 #   ]
@@ -208,6 +209,14 @@ resource "aws_ssm_parameter" "waypoint-context" {
       value
     ]
   }
+}
+
+# The name of this parameter is expected by the backup_cron.sh script.
+# DO NOT CHANGE UNLESS backup_cron.sh is modifed as well.
+resource "aws_ssm_parameter" "waypoint-backup" {
+  name  = "waypoint-backup-bucket"
+  type  = "String"
+  value = aws_s3_bucket.backup-storage.id
 }
 
 resource "aws_iam_service_linked_role" "autoscaling" {
@@ -267,3 +276,14 @@ resource "aws_route53_record" "cert-validation" {
 #     evaluate_target_health = true
 #   }
 # }
+
+resource "aws_s3_bucket" "backup-storage" {
+  bucket        = var.backup-storage-bucket-name
+  acl           = "private"
+  force_destroy = var.force-destroy-back-bucket
+
+  tags = {
+    Name        = var.backup-storage-bucket-name
+    Environment = "Dev"
+  }
+}

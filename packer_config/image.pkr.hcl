@@ -45,15 +45,15 @@ source "amazon-ebs" "linux2" {
     http_put_response_hop_limit = 1
   }
 
-  vpc_id = "vpc-6e92a815"
+  vpc_id    = "vpc-6e92a815"
   subnet_id = "subnet-0fdfc630"
 
-#   vpc_filter {
-#     filters = {
-#       "isDefault" : true,
-#  #     "cidr" : "/16"
-#     }
-#   }
+  #   vpc_filter {
+  #     filters = {
+  #       "isDefault" : true,
+  #  #     "cidr" : "/16"
+  #     }
+  #   }
 }
 
 build {
@@ -61,6 +61,16 @@ build {
 
   provisioner "file" {
     source      = "waypoint.service"
+    destination = "/tmp/"
+  }
+
+  provisioner "file" {
+    source      = "waypoint_cron.timer"
+    destination = "/tmp/"
+  }
+
+  provisioner "file" {
+    source      = "waypoint_backup.service"
     destination = "/tmp/"
   }
 
@@ -74,12 +84,21 @@ build {
     destination = "/tmp/"
   }
 
+  provisioner "file" {
+    source      = "backup_cron.sh"
+    destination = "/tmp/"
+  }
+
   provisioner "shell" {
     inline = [
       "echo Connected via SSM at '${build.User}@${build.Host}:${build.Port}'",
       "chmod +x /tmp/boot_script.sh",
+      "chmod +x /tmp/backup_cron.sh",
       "sudo mv /tmp/waypoint.service /usr/lib/systemd/system/",
+      "sudo mv /tmp/waypoint_backup.service /usr/lib/systemd/system/",
+      "sudo mv /tmp/waypoint_cron.timer /usr/lib/systemd/system/",
       "sudo mv /tmp/boot_script.sh /usr/bin/",
+      "sudo mv /tmp/backup_cron.sh /usr/bin/",
       "chmod +x /tmp/install.sh",
       "bash /tmp/install.sh"
     ]

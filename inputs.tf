@@ -3,6 +3,11 @@ variable "region" {
   description = "The AWS region to target"
 }
 
+variable "profile" {
+  type        = string
+  description = "The AWS Profile to use for Packer builds and Terraform runs"
+}
+
 variable "instance-type" {
   type        = string
   description = "The instance type to use for the Waypoint Deployment"
@@ -36,4 +41,15 @@ variable "security-groups-ids" {
 variable "domain-name" {
   type        = string
   description = "The domain name for the certificate and ALB to advertise"
+}
+
+variable "backup-storage-bucket-name" {
+  type        = string
+  description = "The name of the S3 bucket to store server snapshots"
+}
+
+variable "force-destroy-back-bucket" {
+  type        = bool
+  description = "A setting to allow Terraform to force destroy a S3 bucket and its content"
+  default     = false
 }
