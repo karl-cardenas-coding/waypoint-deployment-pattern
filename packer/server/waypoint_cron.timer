@@ -4,6 +4,7 @@ Requires=waypoint_backup.service
 [Timer]
 Unit=waypoint_cron.service
 OnUnitActiveSec=5m
+OnCalendar=hourly
 AccuracySec=1s
 [Install]
 WantedBy=timers.target

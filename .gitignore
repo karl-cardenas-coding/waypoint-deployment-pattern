@@ -1,5 +1,6 @@
 variables.pkrvars.hcl
 terraform.tfvars
+.terraform.lock.hcl
 .terraform/
 packer_cache/
 terraform.tfstate.*

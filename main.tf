@@ -21,7 +21,7 @@ provider "aws" {
 ## This data resource is configured to retrieve the AMI created by the Packer job.
 data "aws_ami" "waypoint-ami" {
   most_recent = true
-  name_regex  = "waypoint_linux2_*"
+  name_regex  = "waypoint_server_linux2_*"
   owners      = ["self"]
 
   filter {
@@ -39,6 +39,29 @@ data "aws_ami" "waypoint-ami" {
   # ]
 }
 
+## This data resource is configured to retrieve the AMI created by the Packer job.
+data "aws_ami" "waypoint-ami-runner" {
+  most_recent = true
+  name_regex  = "waypoint_runner_linux2_*"
+  owners      = ["self"]
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  filter {
+    name   = "is-public"
+    values = [false]
+  }
+
+  # depends_on = [
+  #   null_resource.build-waypoint-ami
+  # ]
+}
+
+
+
 # resource "null_resource" "build-waypoint-ami" {
 
 #   triggers = {
@@ -46,7 +69,7 @@ data "aws_ami" "waypoint-ami" {
 #   }
 
 #   provisioner "local-exec" {
-#     command = "cd packer_config/ && packer build ."
+#     command = "cd packer/server/ && packer build ."
 
 #     environment = {
 #       AWS_PROFILE = var.profile
@@ -54,13 +77,25 @@ data "aws_ami" "waypoint-ami" {
 #   }
 # }
 
+# resource "null_resource" "build-waypoint-ami-runner" {
 
+#   triggers = {
+#     run = timestamp()
+#   }
 
-# module "alb" {
+#   provisioner "local-exec" {
+#     command = "cd packer/runner/ && packer build ."
+
+#     environment = {
+#       AWS_PROFILE = var.profile
+#     }
+#   }
+# }
+# module "nlb" {
 #   source  = "terraform-aws-modules/alb/aws"
-#   version = "~> 6.1"
+#   version = "~> 6.2"
 
-#   name = "waypoint-alb-${var.region}"
+#   name = "waypoint-server-nlb-${var.region}"
 
 #   load_balancer_type = "network"
 
@@ -69,7 +104,7 @@ data "aws_ami" "waypoint-ami" {
 #   # security_groups = var.security-groups-ids
 
 #   # access_logs = {
-#   #   bucket = "my-alb-logs"
+#   #   bucket = "my-nlb-logs"
 #   # }
 
 #   target_groups = [
@@ -88,7 +123,7 @@ data "aws_ami" "waypoint-ami" {
 #       # }
 #     },
 #     {
-#       name_prefix          = "dft"
+#       name_prefix          = "wsrv-"
 #       backend_protocol     = "TCP"
 #       protocol_version     = "gRPC"
 #       backend_port         = 9701
@@ -122,6 +157,8 @@ data "aws_ami" "waypoint-ami" {
 #     }
 #   ]
 
+
+
 #   # depends_on = [
 #   #   null_resource.build-waypoint-ami
 #   # ]
@@ -145,12 +182,12 @@ data "aws_ami" "waypoint-ami" {
 #   iam_instance_profile_name   = var.instance-profile
 #   associate_public_ip_address = true
 
-#   target_group_arns = module.alb.target_group_arns
+#   target_group_arns = module.nlb.target_group_arns
 
 #   termination_policies = ["OldestInstance"]
 
 #   # Launch template
-#   lt_name                = "waypoint-deployment-asg"
+#   lt_name                = "waypoint-deployment-server-asg"
 #   description            = "A launch template for deploying Waypoint"
 #   update_default_version = true
 
@@ -200,6 +237,89 @@ data "aws_ami" "waypoint-ami" {
 #   # ]
 # }
 
+# module "asg-runners" {
+#   source  = "terraform-aws-modules/autoscaling/aws"
+#   version = "~> 4.0"
+
+#   # Autoscaling group
+#   name = "waypoint-runners-${var.region}"
+
+#   min_size                    = 1
+#   max_size                    = 1
+#   desired_capacity            = 1
+#   wait_for_capacity_timeout   = "5m"
+#   health_check_grace_period   = "30"
+#   delete_timeout              = "5m"
+#   health_check_type           = "EC2"
+#   vpc_zone_identifier         = var.subnet-ids
+#   iam_instance_profile_name   = var.instance-profile
+#   associate_public_ip_address = true
+
+#   termination_policies = ["OldestInstance"]
+
+#   # Launch template
+#   lt_name                = "waypoint-deployment-runner-asg"
+#   description            = "A launch template for deploying Waypoint"
+#   update_default_version = true
+
+#   use_lt     = true
+#   create_lt  = true
+#   lt_version = "$Latest"
+
+#   image_id          = data.aws_ami.waypoint-ami-runner.id
+#   instance_type     = var.instance-type
+#   ebs_optimized     = false
+#   enable_monitoring = false
+
+#   network_interfaces = [
+#     {
+#       delete_on_termination       = true
+#       description                 = "eth0"
+#       device_index                = 0
+#       security_groups             = var.security-groups-ids
+#       associate_public_ip_address = true
+#     }
+#   ]
+
+#   block_device_mappings = [
+#     {
+#       # Root volume
+#       device_name = "/dev/xvda"
+#       no_device   = 0
+#       ebs = {
+#         delete_on_termination = true
+#         encrypted             = true
+#         volume_size           = 30
+#         volume_type           = "gp2"
+#       }
+#     }
+#   ]
+
+#   metadata_options = {
+#     http_endpoint               = "enabled"
+#     http_tokens                 = "required"
+#     http_put_response_hop_limit = 32
+#   }
+
+#   tags_as_map = var.tags
+
+  # instance_market_options = {
+  #   market_type = "spot"
+  #   spot_options = {
+  #     spot_instance_type = var.instance-type
+  #     block_duration_minutes = 60
+  #   }
+  # }
+
+#   depends_on = [
+#     module.asg,
+#     module.nlb
+#     # null_resource.build-waypoint-ami
+#   ]
+# }
+
+
+
 resource "aws_ssm_parameter" "waypoint-context" {
   name  = "waypoint_context"
   type  = "SecureString"
@@ -218,6 +338,14 @@ resource "aws_ssm_parameter" "waypoint-backup" {
   name  = "waypoint-backup-bucket"
   type  = "String"
   value = aws_s3_bucket.backup-storage.id
+}
+
+# This is used by the init-runner.sh script.
+# It's how the runner becomes aware of the Waypoint server domain.
+resource "aws_ssm_parameter" "waypoint-domain" {
+  name  = "waypoint_domain"
+  type  = "String"
+  value = var.domain-name
 }
 
 resource "aws_iam_service_linked_role" "autoscaling" {
@@ -266,14 +394,14 @@ resource "aws_route53_record" "cert-validation" {
   zone_id         = data.aws_route53_zone.selected.zone_id
 }
 
-# resource "aws_route53_record" "www" {
+# resource "aws_route53_record" "alias-record-for-custom-domain" {
 #   zone_id = data.aws_route53_zone.selected.zone_id
 #   name    = var.domain-name
 #   type    = "A"
 
 #   alias {
-#     name                   = module.alb.lb_dns_name
-#     zone_id                = module.alb.lb_zone_id
+#     name                   = module.nlb.lb_dns_name
+#     zone_id                = module.nlb.lb_zone_id
 #     evaluate_target_health = true
 #   }
 # }

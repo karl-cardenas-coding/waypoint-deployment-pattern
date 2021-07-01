@@ -19,6 +19,10 @@ The following products are utilized in this project.
 * [HashiCorp Waypoint](https://www.waypointproject.io/)
 * [AWS](https://aws.amazon.com/ec2/?ec2-whats-new.sort-by=item.additionalFields.postDateTime&ec2-whats-new.sort-order=desc)
 
+## Requirements
+
+* A custom domain and hosted zone is required. Without a valid TLS certificate AWS load balancers are unable to handle gRPC traffic.
+
 ## Getting Started
 Fork the project to your own GitHub namespace, create a file named `terraform.tfvars` and start populating the file with values for the required Terraform input variables, see the [requirements section](#requirements) below to identify required inputs. As mentioned previously, feel free to to create more variables and customize the template as needed.
 

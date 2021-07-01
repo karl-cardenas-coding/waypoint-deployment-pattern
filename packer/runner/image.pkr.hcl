@@ -24,7 +24,7 @@ data "amazon-ami" "latest-linux2" {
 }
 
 source "amazon-ebs" "linux2" {
-  ami_name                    = "waypoint_linux2_${local.image_suffix}"
+  ami_name                    = "waypoint_runner_linux2_${local.image_suffix}"
   instance_type               = "t2.micro"
   region                      = var.region
   ami_description             = var.description
@@ -36,8 +36,8 @@ source "amazon-ebs" "linux2" {
   associate_public_ip_address = var.public-ip
   force_deregister            = true
   force_delete_snapshot       = true
-  tags                        = merge({ Name = "waypoint_linux2_${local.image_suffix}" }, var.tags)
-  snapshot_tags               = merge({ Name = "waypoint_linux2_${local.image_suffix}" }, var.tags)
+  tags                        = merge({ Name = "waypoint_runner_linux2_${local.image_suffix}" }, var.tags)
+  snapshot_tags               = merge({ Name = "waypoint_runner_linux2_${local.image_suffix}" }, var.tags)
 
   metadata_options {
     http_endpoint               = "enabled"
@@ -65,40 +65,21 @@ build {
   }
 
   provisioner "file" {
-    source      = "waypoint_cron.timer"
-    destination = "/tmp/"
-  }
-
-  provisioner "file" {
-    source      = "waypoint_backup.service"
-    destination = "/tmp/"
-  }
-
-  provisioner "file" {
     source      = "install.sh"
     destination = "/tmp/"
   }
 
   provisioner "file" {
-    source      = "boot_script.sh"
-    destination = "/tmp/"
-  }
-
-  provisioner "file" {
-    source      = "backup_cron.sh"
+    source      = "init-runner.sh"
     destination = "/tmp/"
   }
 
   provisioner "shell" {
     inline = [
       "echo Connected via SSM at '${build.User}@${build.Host}:${build.Port}'",
-      "chmod +x /tmp/boot_script.sh",
-      "chmod +x /tmp/backup_cron.sh",
       "sudo mv /tmp/waypoint.service /usr/lib/systemd/system/",
-      "sudo mv /tmp/waypoint_backup.service /usr/lib/systemd/system/",
-      "sudo mv /tmp/waypoint_cron.timer /usr/lib/systemd/system/",
-      "sudo mv /tmp/boot_script.sh /usr/bin/",
-      "sudo mv /tmp/backup_cron.sh /usr/bin/",
+      "chmod +x /tmp/init-runner.sh",
+      "sudo mv /tmp/init-runner.sh /usr/bin/",
       "chmod +x /tmp/install.sh",
       "bash /tmp/install.sh"
     ]
