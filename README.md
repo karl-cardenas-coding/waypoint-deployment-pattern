@@ -21,12 +21,14 @@ The following products are utilized in this project.
 
 ## Requirements
 
-* A custom domain and hosted zone is required. Without a valid TLS certificate AWS load balancers are unable to handle gRPC traffic.
+* An AWS account
+* AWS credentials and permissions to deploy AWS resources. Please see the [Terraform README](./terraform/README.md) for a list of all AWS resources deployed.
+* A custom domain and hosted zone is needed. Without a valid TLS certificate AWS load balancers are unable to handle gRPC traffic.
 
 ## Getting Started
-Fork the project to your own GitHub namespace, create a file named `terraform.tfvars` and start populating the file with values for the required Terraform input variables, see the [requirements section](#requirements) below to identify required inputs. As mentioned previously, feel free to to create more variables and customize the template as needed.
+Fork the project to your own GitHub namespace, create a file named `terraform.tfvars` in the terraform folder and start populating the file with values for the required Terraform input variables, see the [requirements section](./terraform/README.md) below to identify required inputs. As mentioned previously, feel free to to create more variables and customize the template as needed.
 
-Next, create a file inside the folder `packer_config`, and name it `variables.auto.pkrvars.hcl`. Populate the variables with values values that corresponds to your compute environment. The content of the file should look similar to the example snippet below. Ensure you specify the AWS profile to use for the Packer build.
+Next, create a file inside the folder `packer` directory and name it `variables.auto.pkrvars.hcl`. Populate the variables with values values that corresponds to your compute environment. The content of the file should look similar to the example snippet below. Ensure you specify the AWS profile to use for the Packer build.
 
 ```tf
 profile          = "myRole"
@@ -41,20 +43,32 @@ tags = {
 }
 ```
 
-Once you have created the two required files, `variables.auto.pkrvars.hcl`, and `terraform.tfvars`, you may begin to start creating the AMI. Follow the steps below to deploy the WayPoint server.
+Once you have created the two required files, `variables.auto.pkrvars.hcl`, and `terraform.tfvars`, you may begin to create the AMI. 
 
-1. Navigate to the `packer_config` folder and issue the command `packer init && packer build .`. This will initialize Packer, download the required plugins and trigger the AMI build process. This may take up to 10 min depending on the EC2 instance size selected.
-1. Once the AMI is created by Packer, navigate back to the root of the project, `cd ../`
+### Create the Waypoint ami
+
+1. Navigate to the `packer` folder.
+
+1. Repeat the step below for each folder, `runner/`, and the `server/`.
+
+1. Switch into the directory and issue the command `packer init && packer build .`. This will initialize Packer and download the required plugins, as well as trigger the AMI build process. This may take up to 10 min depending on the EC2 instance size selected.
+
+Once the AMIs are created by Packer, navigate back to the root of the project, `cd ../../`
+
+### Deploy Waypoint
+Follow the steps below to deploy the WayPoint server.
+
+
 1. Issue the command `terraform init && terraform plan`. This will initialize Terraform and provide a preview of the changes Terraform will make.
 1. If everything looks good in the Terraform plan output then go ahead and issue the command `terraform apply -auto-approve`. Wait for all resources to come up. This may take about 5 min, depending on the instance sizes selected.
 1. Go to the AWS SSM Parameter store and retrive the Waypoint token. The token is stored in the parameter named `waypoint-context`.
 1. Navigate to your domain, and authenticate into the Waypoint UI.
 1. Configure your local environment for Waypoint. See [Local Workstation Configuration](#local-workstation-configuration) for more guidance.
-1. Configure the remote runner. See [Remote Runner](#remote-runner) for more guidance.
 1. At this point, you may now start using Waypoint for application deployments 🚀🎉
 
 ## Packer
 
+The AMI is creted through HashiCorp Packer. The AMI is based of the latest version of the Linux2 AMI. 
 
 ## Terraform
 
@@ -81,60 +95,6 @@ resource "null_resource" "build-waypoint-ami" {
 ```
 
 Feel free to adjust the trigger as needed. There are commented `depends_on` added to all resources that depends on this step to be completed prior. 
-
-### Terraform Usage
-
-## Requirements
-
-| Name | Version |
-|------|---------|
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 3.0 |
-
-## Providers
-
-| Name | Version |
-|------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.46.0 |
-
-## Modules
-
-No modules.
-
-## Resources
-
-| Name | Type |
-|------|------|
-| [aws_acm_certificate.domain](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/acm_certificate) | resource |
-| [aws_iam_service_linked_role.autoscaling](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_service_linked_role) | resource |
-| [aws_route53_record.cert-validation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
-| [aws_s3_bucket.backup-storage](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
-| [aws_ssm_parameter.waypoint-backup](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
-| [aws_ssm_parameter.waypoint-context](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
-| [aws_ami.waypoint-ami](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
-| [aws_route53_zone.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) | data source |
-
-## Inputs
-
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_backup-storage-bucket-name"></a> [backup-storage-bucket-name](#input\_backup-storage-bucket-name) | The name of the S3 bucket to store server snapshots | `string` | n/a | yes |
-| <a name="input_domain-name"></a> [domain-name](#input\_domain-name) | The domain name for the certificate and ALB to advertise | `string` | n/a | yes |
-| <a name="input_force-destroy-back-bucket"></a> [force-destroy-back-bucket](#input\_force-destroy-back-bucket) | A setting to allow Terraform to force destroy a S3 bucket and its content | `bool` | `false` | no |
-| <a name="input_instance-profile"></a> [instance-profile](#input\_instance-profile) | The IAM Instance profile name to use on the EC2 instance | `string` | n/a | yes |
-| <a name="input_instance-type"></a> [instance-type](#input\_instance-type) | The instance type to use for the Waypoint Deployment | `string` | n/a | yes |
-| <a name="input_profile"></a> [profile](#input\_profile) | The AWS Profile to use for Packer builds and Terraform runs | `string` | n/a | yes |
-| <a name="input_region"></a> [region](#input\_region) | The AWS region to target | `string` | n/a | yes |
-| <a name="input_role_arn"></a> [role\_arn](#input\_role\_arn) | The role arn for the AWS role to assume when executing Terraform | `string` | n/a | yes |
-| <a name="input_security-groups-ids"></a> [security-groups-ids](#input\_security-groups-ids) | A list of security groups to use for Waypoint resources | `list(string)` | n/a | yes |
-| <a name="input_subnet-ids"></a> [subnet-ids](#input\_subnet-ids) | A list of eligble subnets to deploy Waypoint resources | `list(string)` | n/a | yes |
-| <a name="input_tags"></a> [tags](#input\_tags) | The default tags to provide the Terraform generated resources | `map(any)` | n/a | yes |
-| <a name="input_vpc-id"></a> [vpc-id](#input\_vpc-id) | The VPC ID to deploy Waypoint | `string` | n/a | yes |
-
-## Outputs
-
-No outputs.
-
-
 
 ## Accessing Waypoint
 
