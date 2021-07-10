@@ -15,8 +15,8 @@ CONTEXT=$(aws ssm get-parameter --name "waypoint_context" --with-decryption --re
 DOMAIN=$(aws ssm get-parameter --name "waypoint_domain" --region $REGION | jq .Parameter.Value) && DOMAIN="${DOMAIN%\"}" && DOMAIN="${DOMAIN#\"}"
 
 ## START RUNNER
-export WAYPOINT_SERVER_ADDR=https://${DOMAIN}:9701
+export WAYPOINT_SERVER_ADDR=${DOMAIN}:9701
 export WAYPOINT_SERVER_TLS=true
-export WAYPOINT_SERVER_TOKEN=$TOKEN
+export WAYPOINT_SERVER_TOKEN=${CONTEXT}
 export WAYPOINT_SERVER_TLS_SKIP_VERIFY=true
 waypoint runner agent

@@ -3,6 +3,11 @@ variable "region" {
   description = "The AWS region to target"
 }
 
+variable "environment" {
+  type        = string
+  description = "The environment this terraform is deploying to"
+}
+
 variable "profile" {
   type        = string
   description = "The AWS Profile to use for Packer builds and Terraform runs"
@@ -53,8 +58,19 @@ variable "backup-storage-bucket-name" {
   description = "The name of the S3 bucket to store server snapshots"
 }
 
+variable "waypoint-loadbalancers-log-bucket" {
+  type        = string
+  description = "The name of the bucket to for all Waypoint loadbalancers to send logs to"
+}
+
 variable "force-destroy-back-bucket" {
   type        = bool
   description = "A setting to allow Terraform to force destroy a S3 bucket and its content"
   default     = false
+}
+
+variable "app-backend-port" {
+  type = number
+  description = "The backend port for the application that the Waypoint runner alb needs to forward requests to"
+  default = 49153
 }
