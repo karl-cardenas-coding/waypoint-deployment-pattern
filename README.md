@@ -10,6 +10,8 @@ This project is for you to use as a starting point for deploying Waypoint into y
 
 **IMPORTANT**: THIS IS NOT AN OFFICIAL HASHICORP PROJECT.
 
+## Architecture
+
 <p align="center">
   <img src="/static/img/Waypoint Architecture.png" alt="The Waypoint logo." width="800"/>
 </p>
