@@ -1,4 +1,4 @@
-# Waypoint Deployment Example
+# Waypoint Deployment Pattern
 
 <p align="center">
   <img src="/static/img/waypoint.png" alt="The Waypoint logo." width="400"/>
