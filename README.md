@@ -32,7 +32,7 @@ The following products are utilized in this project.
 * A custom domain and hosted zone is needed. Without a valid TLS certificate AWS load balancers are unable to handle gRPC traffic.
 
 ## Getting Started
-Fork the project to your own GitHub namespace, create a file named `terraform.tfvars` in the terraform folder and start populating the file with values for the required Terraform input variables, see the [requirements section](./terraform/README.md) below to identify required inputs. As mentioned previously, feel free to to create more variables and customize the template as needed.
+Fork the project to your own GitHub namespace. Create a file named `terraform.tfvars` in the terraform folder and start populating the file with values for the required Terraform input variables, see the [requirements section](./terraform/README.md) below to identify required inputs. As mentioned previously, feel free to to create more variables and customize the template as needed.
 
 Next, create a file inside the folder `packer` directory and name it `variables.auto.pkrvars.hcl`. Populate the variables with values values that corresponds to your compute environment. The content of the file should look similar to the example snippet below. Ensure you specify the AWS profile to use for the Packer build.
 
@@ -74,7 +74,7 @@ Follow the steps below to deploy the WayPoint server.
 
 ## Packer
 
-The AMI is creted through HashiCorp Packer. The AMI is based of the latest version of the Linux2 AMI. 
+The AMI is created through HashiCorp Packer. The AMI is based of the latest version of the Linux2 AMI. 
 
 ## Terraform
 
@@ -100,7 +100,9 @@ resource "null_resource" "build-waypoint-ami" {
 }
 ```
 
-Feel free to adjust the trigger as needed. There are commented `depends_on` added to all resources that depends on this step to be completed prior. 
+Feel free to adjust the trigger as needed. 
+There are commented `depends_on` added to all resources that depends on this step to be completed prior.
+Please review the Terraform [README.MD](./terraform/README.md) for more details. 
 
 ## Accessing Waypoint
 
