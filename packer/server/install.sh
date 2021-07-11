@@ -9,16 +9,15 @@ sudo chown --recursive waypoint:waypoint /etc/waypoint.d
 mkdir -p /opt/waypoint/backups
 ## Setup Waypoint as a startup process and the Waypoint backup process
 sudo systemctl enable waypoint
-sudo systemctl enable waypoint_backup
-sudo systemctl enable waypoint_cron.timer
+# Start the Waypoint server snapshot cron job
+sudo crontab -u waypoint /usr/lib/cron_file
 ## Install Waypoint, SSM Agent, AWS CLI v2, jq, Docker and other updates
 sudo yum update -y
 sudo yum install -y yum-utils
 sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
-sudo yum -y install waypoint jq curl
+sudo yum -y install waypoint jq curl docker
 /usr/bin/waypoint version
 sudo yum install -y https://s3.region.amazonaws.com/amazon-ssm-region/latest/linux_amd64/amazon-ssm-agent.rpm
-sudo yum install -y docker
 ## Added to allow Docker usage
 sudo usermod -aG docker waypoint
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"

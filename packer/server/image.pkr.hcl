@@ -65,15 +65,9 @@ build {
   }
 
   provisioner "file" {
-    source      = "waypoint_cron.timer"
+    source      = "cron_file"
     destination = "/tmp/"
   }
-
-  provisioner "file" {
-    source      = "waypoint_backup.service"
-    destination = "/tmp/"
-  }
-
   provisioner "file" {
     source      = "install.sh"
     destination = "/tmp/"
@@ -94,9 +88,9 @@ build {
       "echo Connected via SSM at '${build.User}@${build.Host}:${build.Port}'",
       "chmod +x /tmp/boot_script.sh",
       "chmod +x /tmp/backup_cron.sh",
+      "chmod 775 /tmp/cron_file",
       "sudo mv /tmp/waypoint.service /usr/lib/systemd/system/",
-      "sudo mv /tmp/waypoint_backup.service /usr/lib/systemd/system/",
-      "sudo mv /tmp/waypoint_cron.timer /usr/lib/systemd/system/",
+      "sudo mv /tmp/cron_file /usr/lib/",
       "sudo mv /tmp/boot_script.sh /usr/bin/",
       "sudo mv /tmp/backup_cron.sh /usr/bin/",
       "chmod +x /tmp/install.sh",
