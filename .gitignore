@@ -1,3 +1,8 @@
 variables.pkrvars.hcl
 terraform.tfvars
-./terraform/
+.terraform.lock.hcl
+.terraform/
+packer_cache/
+terraform.tfstate.*
+terraform.tfstate
+workfile.txt

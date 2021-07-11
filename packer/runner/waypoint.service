@@ -1,0 +1,20 @@
+[Unit]
+Description="HashiCorp Waypoint - An application deployment solution"
+Documentation=https://www.waypointproject.io/
+Requires=network-online.target
+After=docker.service
+Requires=docker.service
+After=network-online.target
+
+[Service]
+Type=simple
+User=waypoint
+Group=waypoint
+ExecStart=/usr/bin/init-runner.sh
+ExecReload=/bin/kill --signal HUP $MAINPID
+KillMode=process
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
