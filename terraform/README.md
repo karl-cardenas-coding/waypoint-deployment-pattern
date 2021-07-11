@@ -65,3 +65,10 @@
 |------|-------------|
 | <a name="output_waypoint-domain-url"></a> [waypoint-domain-url](#output\_waypoint-domain-url) | n/a |
 | <a name="output_waypoint-runner-app-url"></a> [waypoint-runner-app-url](#output\_waypoint-runner-app-url) | n/a |
+
+
+## Resources Graph
+
+This graph is generated using the open source tool [rover](https://github.com/im2nguyen/rover)
+
+![Rover graph of Terraform resources](../static/img/rover.png)
