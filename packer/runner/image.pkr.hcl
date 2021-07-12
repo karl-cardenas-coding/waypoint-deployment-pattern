@@ -45,8 +45,8 @@ source "amazon-ebs" "linux2" {
     http_put_response_hop_limit = 1
   }
 
-  vpc_id    = "vpc-6e92a815"
-  subnet_id = "subnet-0fdfc630"
+  vpc_id    = var.vpc-id
+  subnet_id = var.subnet-id
 
   #   vpc_filter {
   #     filters = {

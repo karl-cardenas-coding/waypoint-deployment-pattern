@@ -38,6 +38,16 @@ variable "public-ip" {
   description = "To enable a public IP for the builder instance"
 }
 
+variable "vpc-id" {
+  type = string
+  description = "The VPC ID for Packer to to use for the AMI build"
+}
+
+variable "subnet-id" {
+  type = string
+  description = "The subnet ID for Packer to to use for the AMI build"
+}
+
 locals {
   image_suffix = formatdate("DD_MMM_YYYY", timestamp())
 }
