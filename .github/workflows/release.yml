@@ -1,0 +1,26 @@
+name: Release to Production
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+    release:
+      name: release
+      runs-on:  ubuntu-latest
+      steps:
+      - 
+        id: checkout
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: "release"
+        run: |
+             npm install @semantic-release/exec -D
+             npm install @semantic-release/changelog -D
+             npm install @semantic-release/github -D
+             npx semantic-release
