@@ -20,6 +20,7 @@ jobs:
           node-version: '14'
       - name: "release"
         run: |
+             npm install
              npm install @semantic-release/exec -D
              npm install @semantic-release/changelog -D
              npm install @semantic-release/github -D
