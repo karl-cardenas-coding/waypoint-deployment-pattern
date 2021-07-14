@@ -31,6 +31,8 @@ The following products are utilized in this project.
 * An AWS account
 * AWS credentials and permissions to deploy AWS resources. Please see the [Terraform README](./terraform/README.md) for a list of all AWS resources deployed.
 * A custom domain and hosted zone is needed. Without a valid TLS certificate AWS load balancers are unable to handle gRPC traffic.
+* An AWS VPC
+
 
 ## Getting Started
 
@@ -105,6 +107,10 @@ Please review the Terraform [README.MD](./terraform/README.md) for more details.
 
 ## Accessing Waypoint
 
+The Terraform output will provide the URL for the Waypoint server and the application loadbalancer. In order to access the Waypoint UI you need the Waypoint context token. This token can be found in the AWS SSM Parameter store. In the AWS Paramater store, retrive the context token from the secret named `waypoint-context`. Next, go to the custom domain endpoint you provided the Terraform configuration, example `https://abc.deployment.com`. 
+
+This will take you to the Waypoint UI authentication page. Provide the token so tha you may log into the Waypoint server. After you have authenticated into Waypoint, you may now configure your workstation to interact with Waypoint.
+
 ### Local Workstation Configuration
 
 In order to interact with the Waypoint server you must configure the Waypoint CLI with the proper context information. This information is provded by the Waypoint server in the UI. Click on the `CLI` button to get the proper information. 
@@ -118,14 +124,4 @@ waypoint context create \
     -server-require-auth=true \
     -server-tls-skip-verify=true \
     -set-default <yourDomainHere>
-```
-
-### Remote Runner
-To setup a remote runner, you need to provide the following configuration to the remote instance. Make sure to add the actual token value provided by Waypoint in the command below.
-```shell
-WAYPOINT_SERVER_ADDR=<yourDomainHere>:9701 \
-WAYPOINT_SERVER_TLS=true \
-WAYPOINT_SERVER_TOKEN=<yourTokenHere> \
-WAYPOINT_SERVER_TLS_SKIP_VERIFY=true \
-waypoint runner agent
 ```

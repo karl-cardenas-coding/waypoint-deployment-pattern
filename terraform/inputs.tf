@@ -46,6 +46,7 @@ variable "subnet-ids" {
 variable "security-groups-ids" {
   type        = list(string)
   description = "A list of security groups to use for Waypoint resources"
+  default = []
 }
 
 variable "domain-name" {
@@ -70,7 +71,11 @@ variable "force-destroy-back-bucket" {
 }
 
 variable "app-backend-port" {
-  type = number
+  type        = number
   description = "The backend port for the application that the Waypoint runner alb needs to forward requests to"
-  default = 49153
+  default     = 49153
+}
+
+locals {
+  create-sg = var.security-groups-ids != [] ? true : false
 }

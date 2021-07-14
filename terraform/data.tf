@@ -41,3 +41,7 @@ data "aws_ami" "waypoint-ami-runner" {
 }
 
 data "aws_elb_service_account" "main" {}
+
+data "aws_vpc" "selected" {
+  id = var.vpc-id
+}
