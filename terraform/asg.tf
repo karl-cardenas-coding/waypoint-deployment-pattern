@@ -39,7 +39,7 @@ module "asg" {
       delete_on_termination       = true
       description                 = "eth0"
       device_index                = 0
-      security_groups             = var.security-groups-ids
+      security_groups             = local.create-sg == true ? [aws_security_group.server[0].id] : var.security-groups-ids
       associate_public_ip_address = true
     }
   ]
@@ -112,7 +112,7 @@ module "asg-runners" {
       delete_on_termination       = true
       description                 = "eth0"
       device_index                = 0
-      security_groups             = var.security-groups-ids
+      security_groups             = local.create-sg == true ? [aws_security_group.runners[0].id] : var.security-groups-ids
       associate_public_ip_address = true
     }
   ]
