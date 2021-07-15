@@ -46,7 +46,7 @@ variable "subnet-ids" {
 variable "security-groups-ids" {
   type        = list(string)
   description = "A list of security groups to use for Waypoint resources"
-  default = []
+  default     = []
 }
 
 variable "domain-name" {

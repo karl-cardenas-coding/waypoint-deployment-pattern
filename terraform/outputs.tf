@@ -4,5 +4,5 @@ output "waypoint-domain-url" {
 
 
 output "waypoint-runner-app-url" {
-  value = "https://${module.alb-runners.lb_dns_name}"
+  value = "http://${module.alb-runners.lb_dns_name}"
 }

@@ -83,7 +83,7 @@ module "alb-runners" {
 
   vpc_id          = var.vpc-id
   subnets         = var.subnet-ids
-  security_groups = local.local.create-sg == true ? [aws_security_group.runenrs[0].id]  : var.security-groups-ids
+  security_groups = local.create-sg == true ? [aws_security_group.alb-runner-sg[0].id] : var.security-groups-ids
 
   access_logs = {
     bucket = aws_s3_bucket.waypoint-loadbalancers-logs.id
