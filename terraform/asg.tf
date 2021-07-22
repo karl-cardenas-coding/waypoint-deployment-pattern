@@ -30,7 +30,7 @@ module "asg" {
   lt_version = "$Latest"
 
   image_id          = data.aws_ami.waypoint-ami.id
-  instance_type     = var.instance-type
+  instance_type     = var.instance-type-server
   ebs_optimized     = false
   enable_monitoring = false
 
@@ -66,10 +66,10 @@ module "asg" {
 
   tags_as_map = var.tags
 
-  # depends_on = [
-  # null_resource.build-waypoint-ami,
-  # null_resource.build-waypoint-ami-runner
-  # ]
+  depends_on = [
+    null_resource.build-waypoint-ami,
+    null_resource.build-waypoint-ami-runner
+  ]
 }
 
 module "asg-runners" {
@@ -103,7 +103,7 @@ module "asg-runners" {
   lt_version = "$Latest"
 
   image_id          = data.aws_ami.waypoint-ami-runner.id
-  instance_type     = var.instance-type
+  instance_type     = var.instance-type-runner
   ebs_optimized     = false
   enable_monitoring = false
 
@@ -141,8 +141,8 @@ module "asg-runners" {
 
   depends_on = [
     module.asg,
-    module.nlb
-    # null_resource.build-waypoint-ami,
-    # null_resource.build-waypoint-ami-runner
+    module.nlb,
+    null_resource.build-waypoint-ami,
+    null_resource.build-waypoint-ami-runner
   ]
 }

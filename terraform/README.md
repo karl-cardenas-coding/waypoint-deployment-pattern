@@ -8,7 +8,7 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 3.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.49.0 |
 
 ## Modules
 
@@ -30,6 +30,7 @@
 | [aws_s3_bucket.backup-storage](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
 | [aws_s3_bucket.waypoint-loadbalancers-logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
 | [aws_s3_bucket_policy.waypoint-loadbalancers-logs-policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy) | resource |
+| [aws_security_group.alb-runner-sg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group.runners](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group.server](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_ssm_parameter.waypoint-backup](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
@@ -52,7 +53,8 @@
 | <a name="input_environment"></a> [environment](#input\_environment) | The environment this terraform is deploying to | `string` | n/a | yes |
 | <a name="input_force-destroy-back-bucket"></a> [force-destroy-back-bucket](#input\_force-destroy-back-bucket) | A setting to allow Terraform to force destroy a S3 bucket and its content | `bool` | `false` | no |
 | <a name="input_instance-profile"></a> [instance-profile](#input\_instance-profile) | The IAM Instance profile name to use on the EC2 instance | `string` | n/a | yes |
-| <a name="input_instance-type"></a> [instance-type](#input\_instance-type) | The instance type to use for the Waypoint Deployment | `string` | n/a | yes |
+| <a name="input_instance-type-runner"></a> [instance-type-runner](#input\_instance-type-runner) | The instance type to use for the Waypoint Deployment runner | `string` | `"m5.large"` | no |
+| <a name="input_instance-type-server"></a> [instance-type-server](#input\_instance-type-server) | The instance type to use for the Waypoint Deployment server | `string` | `"m5.large"` | no |
 | <a name="input_profile"></a> [profile](#input\_profile) | The AWS Profile to use for Packer builds and Terraform runs | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | The AWS region to target | `string` | n/a | yes |
 | <a name="input_role_arn"></a> [role\_arn](#input\_role\_arn) | The role arn for the AWS role to assume when executing Terraform | `string` | n/a | yes |
@@ -68,6 +70,7 @@
 |------|-------------|
 | <a name="output_waypoint-domain-url"></a> [waypoint-domain-url](#output\_waypoint-domain-url) | n/a |
 | <a name="output_waypoint-runner-app-url"></a> [waypoint-runner-app-url](#output\_waypoint-runner-app-url) | n/a |
+
 
 ## Resources Graph
 

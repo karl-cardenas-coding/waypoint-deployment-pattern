@@ -18,9 +18,16 @@ variable "role_arn" {
   description = "The role arn for the AWS role to assume when executing Terraform"
 }
 
-variable "instance-type" {
+variable "instance-type-server" {
   type        = string
-  description = "The instance type to use for the Waypoint Deployment"
+  description = "The instance type to use for the Waypoint Deployment server"
+  default     = "m5.large"
+}
+
+variable "instance-type-runner" {
+  type        = string
+  description = "The instance type to use for the Waypoint Deployment runner"
+  default     = "m5.large"
 }
 
 variable "instance-profile" {
