@@ -30,7 +30,7 @@ module "asg" {
   lt_version = "$Latest"
 
   image_id          = data.aws_ami.waypoint-ami.id
-  instance_type     = var.instance-type
+  instance_type     = var.instance-type-server
   ebs_optimized     = false
   enable_monitoring = false
 
@@ -39,7 +39,7 @@ module "asg" {
       delete_on_termination       = true
       description                 = "eth0"
       device_index                = 0
-      security_groups             = var.security-groups-ids
+      security_groups             = local.create-sg == true ? [aws_security_group.server[0].id] : var.security-groups-ids
       associate_public_ip_address = true
     }
   ]
@@ -66,10 +66,10 @@ module "asg" {
 
   tags_as_map = var.tags
 
-  # depends_on = [
-  # null_resource.build-waypoint-ami,
-  # null_resource.build-waypoint-ami-runner
-  # ]
+  depends_on = [
+    null_resource.build-waypoint-ami,
+    null_resource.build-waypoint-ami-runner
+  ]
 }
 
 module "asg-runners" {
@@ -103,7 +103,7 @@ module "asg-runners" {
   lt_version = "$Latest"
 
   image_id          = data.aws_ami.waypoint-ami-runner.id
-  instance_type     = var.instance-type
+  instance_type     = var.instance-type-runner
   ebs_optimized     = false
   enable_monitoring = false
 
@@ -112,7 +112,7 @@ module "asg-runners" {
       delete_on_termination       = true
       description                 = "eth0"
       device_index                = 0
-      security_groups             = var.security-groups-ids
+      security_groups             = local.create-sg == true ? [aws_security_group.runners[0].id] : var.security-groups-ids
       associate_public_ip_address = true
     }
   ]
@@ -141,7 +141,7 @@ module "asg-runners" {
 
   depends_on = [
     module.asg,
-    module.nlb
+    module.nlb,
     # null_resource.build-waypoint-ami,
     # null_resource.build-waypoint-ami-runner
   ]

@@ -8,7 +8,7 @@ module "nlb" {
 
   vpc_id  = var.vpc-id
   subnets = var.subnet-ids
-  # security_groups = var.security-groups-ids
+
 
   access_logs = {
     bucket = aws_s3_bucket.waypoint-loadbalancers-logs.id
@@ -67,9 +67,9 @@ module "nlb" {
 
 
   depends_on = [
-    aws_s3_bucket.waypoint-loadbalancers-logs
-  # null_resource.build-waypoint-ami,
-  # null_resource.build-waypoint-ami-runner
+    aws_s3_bucket.waypoint-loadbalancers-logs,
+    null_resource.build-waypoint-ami,
+    null_resource.build-waypoint-ami-runner
   ]
 }
 
@@ -83,7 +83,7 @@ module "alb-runners" {
 
   vpc_id          = var.vpc-id
   subnets         = var.subnet-ids
-  security_groups = var.security-groups-ids
+  security_groups = local.create-sg == true ? [aws_security_group.alb-runner-sg[0].id] : var.security-groups-ids
 
   access_logs = {
     bucket = aws_s3_bucket.waypoint-loadbalancers-logs.id
@@ -119,8 +119,8 @@ module "alb-runners" {
 
 
   depends_on = [
-    aws_s3_bucket.waypoint-loadbalancers-logs
-  # null_resource.build-waypoint-ami,
-  # null_resource.build-waypoint-ami-runner
+    aws_s3_bucket.waypoint-loadbalancers-logs,
+    null_resource.build-waypoint-ami,
+    null_resource.build-waypoint-ami-runner
   ]
 }

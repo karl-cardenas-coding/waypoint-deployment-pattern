@@ -7,32 +7,33 @@
 
 
 
-# resource "null_resource" "build-waypoint-ami" {
+resource "null_resource" "build-waypoint-ami" {
 
-#   triggers = {
-#     run = timestamp()
-#   }
+  triggers = {
+    run = timestamp()
+  }
 
-#   provisioner "local-exec" {
-#     command = "cd packer/server/ && packer build ."
+  provisioner "local-exec" {
+    command = "cd ../packer/server/ && packer build ."
 
-#     environment = {
-#       AWS_PROFILE = var.profile
-#     }
-#   }
-# }
+    environment = {
+      AWS_PROFILE = var.profile
+    }
+  }
+}
 
-# resource "null_resource" "build-waypoint-ami-runner" {
+resource "null_resource" "build-waypoint-ami-runner" {
 
-#   triggers = {
-#     run = timestamp()
-#   }
+  triggers = {
+    run = timestamp()
+  }
 
-#   provisioner "local-exec" {
-#     command = "cd packer/runner/ && packer build ."
+  provisioner "local-exec" {
+    // Adding a sleep so that the data resource for identifying the latest AMI resolves the newly created AMI.
+    command = "cd ../packer/runner/ && packer build . && sleep 10"
 
-#     environment = {
-#       AWS_PROFILE = var.profile
-#     }
-#   }
-# }
+    environment = {
+      AWS_PROFILE = var.profile
+    }
+  }
+}

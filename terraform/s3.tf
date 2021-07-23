@@ -48,7 +48,7 @@ data "aws_iam_policy_document" "s3_bucket_lb_write" {
     actions = [
       "s3:PutObject"
     ]
-    effect = "Allow"
+    effect    = "Allow"
     resources = ["${aws_s3_bucket.waypoint-loadbalancers-logs.arn}/*"]
     principals {
       identifiers = ["delivery.logs.amazonaws.com"]
@@ -61,7 +61,7 @@ data "aws_iam_policy_document" "s3_bucket_lb_write" {
     actions = [
       "s3:GetBucketAcl"
     ]
-    effect = "Allow"
+    effect    = "Allow"
     resources = ["${aws_s3_bucket.waypoint-loadbalancers-logs.arn}"]
     principals {
       identifiers = ["delivery.logs.amazonaws.com"]

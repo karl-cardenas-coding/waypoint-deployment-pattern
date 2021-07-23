@@ -18,9 +18,16 @@ variable "role_arn" {
   description = "The role arn for the AWS role to assume when executing Terraform"
 }
 
-variable "instance-type" {
+variable "instance-type-server" {
   type        = string
-  description = "The instance type to use for the Waypoint Deployment"
+  description = "The instance type to use for the Waypoint Deployment server"
+  default     = "m5.large"
+}
+
+variable "instance-type-runner" {
+  type        = string
+  description = "The instance type to use for the Waypoint Deployment runner"
+  default     = "m5.large"
 }
 
 variable "instance-profile" {
@@ -46,6 +53,7 @@ variable "subnet-ids" {
 variable "security-groups-ids" {
   type        = list(string)
   description = "A list of security groups to use for Waypoint resources"
+  default     = []
 }
 
 variable "domain-name" {
@@ -70,7 +78,11 @@ variable "force-destroy-back-bucket" {
 }
 
 variable "app-backend-port" {
-  type = number
+  type        = number
   description = "The backend port for the application that the Waypoint runner alb needs to forward requests to"
-  default = 49153
+  default     = 49153
+}
+
+locals {
+  create-sg = var.security-groups-ids != [] ? true : false
 }
