@@ -29,7 +29,8 @@ resource "null_resource" "build-waypoint-ami-runner" {
   }
 
   provisioner "local-exec" {
-    command = "cd ../packer/runner/ && packer build ."
+    // Adding a sleep so that the data resource for identifying the latest AMI resolves the newly created AMI.
+    command = "cd ../packer/runner/ && packer build . && sleep 10"
 
     environment = {
       AWS_PROFILE = var.profile

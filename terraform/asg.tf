@@ -142,7 +142,7 @@ module "asg-runners" {
   depends_on = [
     module.asg,
     module.nlb,
-    null_resource.build-waypoint-ami,
-    null_resource.build-waypoint-ami-runner
+    # null_resource.build-waypoint-ami,
+    # null_resource.build-waypoint-ami-runner
   ]
 }

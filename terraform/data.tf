@@ -14,9 +14,10 @@ data "aws_ami" "waypoint-ami" {
     values = [false]
   }
 
-  # depends_on = [
-  #   null_resource.build-waypoint-ami
-  # ]
+  depends_on = [
+    # null_resource.build-waypoint-ami,
+    # null_resource.build-waypoint-ami-runner
+  ]
 }
 
 ## This data resource is configured to retrieve the AMI created by the Packer job.
@@ -35,9 +36,10 @@ data "aws_ami" "waypoint-ami-runner" {
     values = [false]
   }
 
-  # depends_on = [
-  #   null_resource.build-waypoint-ami
-  # ]
+  depends_on = [
+    # null_resource.build-waypoint-ami,
+    # null_resource.build-waypoint-ami-runner
+  ]
 }
 
 data "aws_elb_service_account" "main" {}

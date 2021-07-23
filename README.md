@@ -8,6 +8,8 @@
 
 This project is for you to use as a starting point for deploying Waypoint into your AWS environment. Fork the project, and start making changes to the configuration files to get HashiCorp Waypoint up and running for your downstream consumers.
 
+An overview of the project can be found in this blog [article](https://cardenas88karl.medium.com/deploying-hashicorpwaypoint-as-a-shared-service-207b35927431)
+
 **IMPORTANT**: THIS IS NOT AN OFFICIAL HASHICORP PROJECT.
 
 ## Architecture
@@ -16,7 +18,7 @@ This project is for you to use as a starting point for deploying Waypoint into y
   <img src="/static/img/Waypoint Architecture.png" alt="The Waypoint logo." width="800"/>
 </p>
 
-## Tools/Products
+## Products
 
 The following products are utilized in this project.
 
@@ -125,3 +127,35 @@ waypoint context create \
     -server-tls-skip-verify=true \
     -set-default <yourDomainHere>
 ```
+
+## Deploy a demo app
+
+A forked version of the HashiCorp Waypoint [demo application](https://github.com/hashicorp/waypoint-examples) can be found in the `demo/` folder. 
+Go to the `demo/` folder. Issue the command `waypoint init` to initialize the project.
+Once the project is initiliaze, issue the command `waypoint up -remote`. This will trigger the build, deploy, and release process. Upon completion, go to the application loadbalancer URL. The URL can be found in the Terraform outputs.
+
+**NOTE**: It may take a few minutes for DNS to resolve.
+
+## Known Issues
+
+### AMI not found when using Terraform to trigger build.
+If you encounter a message during the `terraform apply` step that the AMI is not found (see below).
+
+```
+ Error: Error creating Auto Scaling Group: ValidationError: You must use a valid fully-formed launch template. The image id '[ami-04c61f099db4b898d]' does not exist
+│ 	status code: 400, request id: a0fe9ccf-e8c1-4b29-bb90-59a7dc602a30
+│
+│   with module.asg.aws_autoscaling_group.this[0],
+│   on .terraform/modules/asg/main.tf line 310, in resource "aws_autoscaling_group" "this":
+│  310: resource "aws_autoscaling_group" "this" {
+
+```
+Ensure that the `depends_on` in the `data.tf` is uncommented.
+
+### The Waypoit generated URL does not work?
+
+This is an expected error. Please use the url of the application load balancer to access the deployed application.
+The URL can be found in the terraform output.
+
+### The command `waypoint destroy -auto-approve` does not remove the project and the deployed application
+This is flaw at the moment. In order to clean up you must remote into the runner (AWS Remote Session Manager) and remove the Docker container. Alternatively, you could terminate the runner instance. The auto-scaling group will ensure another runner instance comes up.  The project will also linger in the Waypoint UI. 
