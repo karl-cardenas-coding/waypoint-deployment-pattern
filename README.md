@@ -6,7 +6,7 @@
 
 ## Overview
 
-This project is for you to use as a starting point for deploying Waypoint into your AWS environment. Fork the project, and start making changes to the configuration files to get HashiCorp Waypoint up and running for your downstream consumers.
+This project is for you to use as a starting point for deploying Waypoint into your AWS environment. Use the template button to get a copy of the project into your own GitHub namespace. Start making changes to the configuration files to get HashiCorp Waypoint up and running for your downstream consumers.
 
 An overview of the project can be found in this blog [article](https://cardenas88karl.medium.com/deploying-hashicorpwaypoint-as-a-shared-service-207b35927431)
 
