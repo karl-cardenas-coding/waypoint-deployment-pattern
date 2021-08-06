@@ -68,8 +68,8 @@ module "nlb" {
 
   depends_on = [
     aws_s3_bucket.waypoint-loadbalancers-logs,
-    null_resource.build-waypoint-ami,
-    null_resource.build-waypoint-ami-runner
+    # null_resource.build-waypoint-ami,
+    # null_resource.build-waypoint-ami-runner
   ]
 }
 
@@ -120,7 +120,7 @@ module "alb-runners" {
 
   depends_on = [
     aws_s3_bucket.waypoint-loadbalancers-logs,
-    null_resource.build-waypoint-ami,
-    null_resource.build-waypoint-ami-runner
+    # null_resource.build-waypoint-ami,
+    # null_resource.build-waypoint-ami-runner
   ]
 }

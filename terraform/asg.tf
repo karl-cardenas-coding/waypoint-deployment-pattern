@@ -66,10 +66,10 @@ module "asg" {
 
   tags_as_map = var.tags
 
-  depends_on = [
-    null_resource.build-waypoint-ami,
-    null_resource.build-waypoint-ami-runner
-  ]
+  # depends_on = [
+  #   null_resource.build-waypoint-ami,
+  #   null_resource.build-waypoint-ami-runner
+  # ]
 }
 
 module "asg-runners" {
