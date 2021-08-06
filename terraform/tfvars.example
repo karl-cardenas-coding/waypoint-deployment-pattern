@@ -1,0 +1,23 @@
+region               = "us-east-1"
+environment          = "test"
+profile              = "automation"
+role_arn             = "arn:aws:iam::0000000000:role/my-role"
+instance-type-server = "t2.micro"
+instance-type-runner = "t2.micro"
+instance-profile     = "my-instance-profile"
+tags = {
+  terraform_managed = true
+  owner             = "Joe Doe"
+}
+vpc-id = "vpc-6e92a212"
+subnet-ids = [
+  "subnet-0fdfc630",
+  "subnet-b103c19f",
+  "subnet-3a3daa35",
+  "subnet-6ed81832",
+  "subnet-26a96141",
+  "subnet-0c198d46"
+]
+domain-name                       = "example.crazykarlcodes.dev"
+backup-storage-bucket-name        = "example.crazykarlcodes.dev-snapshots"
+waypoint-loadbalancers-log-bucket = "example.crazykarlcodes.dev-logging"

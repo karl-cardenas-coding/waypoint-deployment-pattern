@@ -45,7 +45,7 @@ The following products are utilized in this project.
 
 You will create two AMIs through HashiCorp Packer. The AMIs are sourced from the latest version of the Amazon Linux2 AMI. 
 
-Next, create a file inside the folder `packer/server` directory and name it `variables.auto.pkrvars.hcl`. Populate the variables with values values that corresponds to your compute environment. The content of the file should look similar to the example snippet below. Ensure you specify the AWS profile to use for the Packer build.
+Next, create a file inside the folder `packer/server` directory and name it `variables.auto.pkrvars.hcl`. See the file `pkrvars.example` as a starting point. Populate the variables with values values that corresponds to your compute environment. The content of the file should look similar to the example snippet below. Ensure you specify the AWS profile to use for the Packer build.
 
 ```tf
 profile          = "myRole"
@@ -73,7 +73,7 @@ Once the two AMIs are created by Packer, navigate back to the root of the projec
 As mentioned previously, feel free to create more variables and customize the template as needed. 
 
 1. Navigate to the `terraform/` folder.
-1. Create a file named `terraform.tfvars`, and populate the values for all the required variables. See the [requirements section](./terraform/README.md) below to identify required inputs.
+1. Create a file named `terraform.tfvars`, and populate the values for all the required variables. See the [requirements section](./terraform/README.md) below to identify required inputs. Use the file `tfvars.example` as a starting point. 
 1. Issue the command `terraform init`. This will initialize Terraform.
 1. Issue the command `terraform plan`. This will generate a preview of the infrastructure that will be created. Verify everything looks as expected.
 1. If everything looks good in the Terraform plan output, then go ahead and issue the command `terraform apply -auto-approve`. Wait for all resources to come up. This may take about 5 min, depending on the instance sizes selected.
@@ -158,4 +158,4 @@ This is an expected error. Please use the url of the application load balancer t
 The URL can be found in the terraform output.
 
 ### The command `waypoint destroy -auto-approve` does not remove the project and the deployed application
-This is flaw at the moment. In order to clean up you must remote into the runner (AWS Remote Session Manager) and remove the Docker container. Alternatively, you could terminate the runner instance. The auto-scaling group will ensure another runner instance comes up.  The project will also linger in the Waypoint UI. 
+This is flaw at the moment. In order to clean up you must remote into the runner (AWS Remote Session Manager) and remove the Docker container. Alternatively, you could terminate the runner instance. The auto-scaling group will ensure another runner instance comes up.  The project will also linger in the Waypoint UI. [GitHub issue](https://github.com/hashicorp/waypoint/issues/1934)
